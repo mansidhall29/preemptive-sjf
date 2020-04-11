@@ -1,0 +1,90 @@
+#include<stdio.h>
+struct process
+{
+int pid, arrivaltime, bursttime, completiontime, waitingtime, turnaround_time, holdpro, flag;
+}
+pr[100];
+int num;
+void sortfun()
+{
+struct process holdpro;
+
+int i, j;
+//these nested loops will sort the processes according to arrival time
+for(i=0;i<num-1;i++)
+{
+	for(j=i+1;j<num;j++)
+	{    
+	    //this condition will swap the processes according to arrivaltime
+		if(pr[i].arrivaltime > pr[j].arrivaltime)
+		{
+			holdpro = pr[i];
+			pr[i] = pr[j];
+			pr[j] = holdpro;
+		}
+	}
+}
+}
+int main()
+{
+int i,t=0,burst=0,last;
+int a[10];
+float waitingtime = 0, turnaround_time = 0, avg_waiting=0, avg_turnaround=0;
+
+printf("Enter The Number Of Processes: ");
+scanf("%d",&num);
+//this loop is to get the input from the user
+for(i = 0; i < num; i++)
+{
+	pr[i].pid = i+1;
+
+	printf("\nEnter Details For P%d process:-\n", pr[i].pid);
+	printf("Arrival Time For P%d: ",pr[i].pid);
+	scanf("%d", &pr[i].arrivaltime );
+	printf("Enter Burst Time P%d: ",pr[i].pid);
+	scanf("%d", &pr[i].bursttime);
+	pr[i].flag = 0;
+	burst = burst + pr[i].bursttime;
+}
+//after getting all the inputs, calling sortfun() method to sort the processes according to arrival time
+sortfun();
+//loop will save burst times in an array
+for(int i=0;i<num;i++)
+{
+	a[i]=pr[i].bursttime;
+}
+pr[9].bursttime = 9999;
+printf("\n\n");
+for(t = pr[0].arrivaltime; t <= burst+1;)
+{
+	last = 9;
+	for(i=0;i<num;i++)
+	{
+		if(pr[i].arrivaltime <= t && pr[i].bursttime < pr[last].bursttime && pr[i].flag != 1)
+		{
+		last = i;
+		}
+		if(pr[last].bursttime==0 && pr[i].flag != 1)
+		{
+		pr[i].flag = 1;
+		pr[last].completiontime=t;pr[last].bursttime=9999;
+	    }
+    }   
+	t++;
+	(pr[last].bursttime)--;
+}
+for(i=0;i<num;i++)
+{
+	pr[i].turnaround_time=(pr[i].completiontime)-(pr[i].arrivaltime);
+	avg_turnaround=avg_turnaround+pr[i].turnaround_time;
+	pr[i].waitingtime=((pr[i].turnaround_time)-a[i]);
+	avg_waiting=avg_waiting+pr[i].waitingtime;
+}
+printf("\nPNO\tArrival Time  \tCompletion Time  \tTurnAround Time  \tWaiting Time\n");
+for(i=0;i<num;i++)
+{
+	printf("P%d\t\t%d\t\t%d\t\t\t%d\t\t\t%d\n",pr[i].pid,pr[i].arrivaltime,pr[i].completiontime,pr[i].turnaround_time,pr[i].waitingtime);
+}
+printf("\n\nAverage Turn Around Time: %f\t\n\n",avg_turnaround);
+printf("Average Waiting Time :\t %f\t\n",avg_waiting);
+}
